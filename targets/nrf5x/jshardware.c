@@ -366,14 +366,69 @@ static void spiFlashReadWrite(unsigned char *tx, unsigned char *rx, unsigned int
     if (rx) rx[i] = result;
   }
 }
+static void spiFlashWriteByte(unsigned char data) {
+  uint32_t pin_sck = (uint32_t)pinInfo[SPIFLASH_PIN_SCK].pin;
+  uint32_t pin_mosi = (uint32_t)pinInfo[SPIFLASH_PIN_MOSI].pin;
+
+  if (data & 0x80)
+    nrf_gpio_pin_set(pin_mosi);
+  else
+    nrf_gpio_pin_clear(pin_mosi);
+  nrf_gpio_pin_set(pin_sck);
+  nrf_gpio_pin_clear(pin_sck);
+
+  if (data & 0x40)
+    nrf_gpio_pin_set(pin_mosi);
+  else
+    nrf_gpio_pin_clear(pin_mosi);
+  nrf_gpio_pin_set(pin_sck);
+  nrf_gpio_pin_clear(pin_sck);
+
+  if (data & 0x20)
+    nrf_gpio_pin_set(pin_mosi);
+  else
+    nrf_gpio_pin_clear(pin_mosi);
+  nrf_gpio_pin_set(pin_sck);
+  nrf_gpio_pin_clear(pin_sck);
+
+  if (data & 0x10)
+    nrf_gpio_pin_set(pin_mosi);
+  else
+    nrf_gpio_pin_clear(pin_mosi);
+  nrf_gpio_pin_set(pin_sck);
+  nrf_gpio_pin_clear(pin_sck);
+
+  if (data & 0x08)
+    nrf_gpio_pin_set(pin_mosi);
+  else
+    nrf_gpio_pin_clear(pin_mosi);
+  nrf_gpio_pin_set(pin_sck);
+  nrf_gpio_pin_clear(pin_sck);
+
+  if (data & 0x4)
+    nrf_gpio_pin_set(pin_mosi);
+  else
+    nrf_gpio_pin_clear(pin_mosi);
+  nrf_gpio_pin_set(pin_sck);
+  nrf_gpio_pin_clear(pin_sck);
+
+  if (data & 0x02)
+    nrf_gpio_pin_set(pin_mosi);
+  else
+    nrf_gpio_pin_clear(pin_mosi);
+  nrf_gpio_pin_set(pin_sck);
+  nrf_gpio_pin_clear(pin_sck);
+
+  if (data & 0x01)
+    nrf_gpio_pin_set(pin_mosi);
+  else
+    nrf_gpio_pin_clear(pin_mosi);
+  nrf_gpio_pin_set(pin_sck);
+  nrf_gpio_pin_clear(pin_sck);
+}
 static void spiFlashWrite(unsigned char *tx, unsigned int len) {
   for (unsigned int i=0;i<len;i++) {
-    int data = tx[i];
-    for (int bit=7;bit>=0;bit--) {
-      nrf_gpio_pin_write((uint32_t)pinInfo[SPIFLASH_PIN_MOSI].pin, (data>>bit)&1 );
-      nrf_gpio_pin_set((uint32_t)pinInfo[SPIFLASH_PIN_SCK].pin);
-      nrf_gpio_pin_clear((uint32_t)pinInfo[SPIFLASH_PIN_SCK].pin);
-    }
+    spiFlashWriteByte(tx[i]);
   }
 }
 static void spiFlashWriteCS(unsigned char *tx, unsigned int len) {
